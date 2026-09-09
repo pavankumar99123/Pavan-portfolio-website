@@ -11,7 +11,7 @@ export default function LivePortrait() {
       />
       <div className="glass-strong absolute inset-0 overflow-hidden rounded-[1.75rem] border-white/10 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)]">
         <img
-          src="/portrait.jpg"
+          src={`${import.meta.env.BASE_URL}portrait.jpg`}
           alt="Pavan Kumar Bathula"
           className="absolute inset-0 h-full w-full object-cover"
           loading="eager"
