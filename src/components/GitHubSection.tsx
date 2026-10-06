@@ -1,26 +1,8 @@
-import { Activity, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { profile } from "../data/profile";
 import Reveal from "./Reveal";
 
 import { FaGithub } from "react-icons/fa";
-
-const contributionLevels = Array.from({ length: 196 }, (_, index) => {
-  const wave = (index * 17 + Math.floor(index / 14) * 11) % 19;
-
-  if (wave < 4) return 0;
-  if (wave < 8) return 1;
-  if (wave < 14) return 2;
-  if (wave < 17) return 3;
-  return 4;
-});
-
-const levelClasses = [
-  "bg-white/[0.04]",
-  "bg-accent-dim/40",
-  "bg-accent-dim/70",
-  "bg-accent/75",
-  "bg-accent-soft",
-];
 
 export default function GitHubSection() {
   return (
@@ -74,30 +56,18 @@ export default function GitHubSection() {
             </div>
 
             <div className="pt-7 text-left">
-              <div className="flex flex-col gap-3 text-xs text-ink-faint sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-2 font-mono">
-                  <Activity size={15} className="text-accent" />
-                  Contribution consistency &amp; commit activity
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="rounded-2xl border border-line bg-black/15 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-ink-faint">Focus</p>
+                  <p className="mt-3 text-lg font-medium text-ink">Generative AI</p>
                 </div>
-                <div className="flex items-center gap-2 font-mono">
-                  <span>Less</span>
-                  <span className="h-3 w-3 rounded-[3px] bg-white/[0.04]" aria-hidden="true" />
-                  <span className="h-3 w-3 rounded-[3px] bg-accent-dim/50" aria-hidden="true" />
-                  <span className="h-3 w-3 rounded-[3px] bg-accent/75" aria-hidden="true" />
-                  <span className="h-3 w-3 rounded-[3px] bg-accent-soft" aria-hidden="true" />
-                  <span>More</span>
+                <div className="rounded-2xl border border-line bg-black/15 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-ink-faint">Stack</p>
+                  <p className="mt-3 text-lg font-medium text-ink">Python • React • Node</p>
                 </div>
-              </div>
-
-              <div className="mt-4 overflow-x-auto rounded-2xl border border-line-soft bg-black/20 p-4">
-                <div className="grid min-w-[42rem] grid-flow-col grid-rows-7 gap-1.5">
-                  {contributionLevels.map((level, index) => (
-                    <span
-                      key={index}
-                      className={`h-3.5 w-3.5 rounded-[3px] ${levelClasses[level]}`}
-                      aria-hidden="true"
-                    />
-                  ))}
+                <div className="rounded-2xl border border-line bg-black/15 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-ink-faint">Profile</p>
+                  <p className="mt-3 text-lg font-medium text-ink">@{profile.githubUsername}</p>
                 </div>
               </div>
             </div>

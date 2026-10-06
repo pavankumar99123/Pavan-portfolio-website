@@ -1,7 +1,6 @@
 import { Mail, Phone, ArrowRight, Download } from "lucide-react";
 import { profile } from "../data/profile";
 import LivePortrait from "./LivePortrait";
-import WorkflowDiagram from "./WorkflowDiagram";
 
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 export default function Hero() {
@@ -114,14 +113,6 @@ export default function Hero() {
             <span className="text-accent">mode:</span> building in public
           </div>
           <LivePortrait />
-
-          <div className="w-full max-w-[280px]">
-            <p className="eyebrow mb-3 text-center">conceptual request flow</p>
-            <WorkflowDiagram
-              compact
-              steps={["User", "AI Agent", "LLM", "Tools", "Response"]}
-            />
-          </div>
         </div>
       </div>
     </section>

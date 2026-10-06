@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Phone, Mail, Send, CheckCircle2 } from "lucide-react";
 import { profile } from "../data/profile";
 import Reveal from "./Reveal";
@@ -11,13 +11,39 @@ interface FormState {
   message: string;
 }
 
+interface MessageEntry {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  createdAt: string;
+}
+
 const emptyForm: FormState = { name: "", email: "", subject: "", message: "" };
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const STORAGE_KEY = "portfolio-inquiries";
+
+const loadMessages = (): MessageEntry[] => {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    return stored ? (JSON.parse(stored) as MessageEntry[]) : [];
+  } catch {
+    return [];
+  }
+};
 
 export default function Contact() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<Partial<FormState>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [messages, setMessages] = useState<MessageEntry[]>([]);
+
+  useEffect(() => {
+    setMessages(loadMessages());
+  }, []);
 
   const validate = (values: FormState): Partial<FormState> => {
     const next: Partial<FormState> = {};
@@ -31,16 +57,41 @@ export default function Contact() {
     return next;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const validationErrors = validate(form);
     setErrors(validationErrors);
-    if (Object.keys(validationErrors).length === 0) {
-      // No backend email service is configured yet — this form is
-      // frontend-ready and validated, pending an email/API integration.
-      setSubmitted(true);
-      setForm(emptyForm);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
     }
+
+    const payload = {
+      name: form.name.trim(),
+      email: form.email.trim(),
+      subject: form.subject.trim(),
+      message: form.message.trim(),
+    };
+
+    const newMessage: MessageEntry = {
+      id: crypto.randomUUID(),
+      name: payload.name,
+      email: payload.email,
+      subject: payload.subject,
+      message: payload.message,
+      createdAt: new Date().toISOString(),
+    };
+
+    const nextMessages = [newMessage, ...loadMessages()].slice(0, 6);
+    setMessages(nextMessages);
+
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextMessages));
+    }
+
+    setSubmitted(true);
+    setForm(emptyForm);
+    setErrors({});
   };
 
   const fieldClass = (hasError?: string) =>
@@ -110,11 +161,10 @@ export default function Contact() {
             <div className="glass flex h-full flex-col items-center justify-center rounded-2xl p-10 text-center">
               <CheckCircle2 size={32} className="text-accent" />
               <h3 className="mt-4 font-display text-lg font-medium text-ink">
-                Message ready to send
+                Message saved in this web app
               </h3>
               <p className="mt-2 max-w-xs text-sm text-ink-dim">
-                Your details passed validation. Connect an email service to this
-                form to deliver messages automatically.
+                Your message has been accepted and will appear in the recent message list below.
               </p>
               <button
                 onClick={() => setSubmitted(false)}
@@ -122,6 +172,28 @@ export default function Contact() {
               >
                 Send another message
               </button>
+
+              {messages.length > 0 && (
+                <div className="mt-8 w-full text-left">
+                  <p className="mb-3 text-xs uppercase tracking-[0.2em] text-ink-faint">
+                    Recent messages
+                  </p>
+                  <div className="space-y-3">
+                    {messages.slice(0, 4).map((item) => (
+                      <div key={item.id} className="rounded-xl border border-line bg-black/15 p-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-sm font-medium text-ink">{item.name}</p>
+                          <span className="text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+                            {new Date(item.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-xs text-accent-soft">{item.subject}</p>
+                        <p className="mt-2 text-sm leading-relaxed text-ink-dim">{item.message}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <form
@@ -222,6 +294,28 @@ export default function Contact() {
                 <Send size={16} />
                 Send Message
               </button>
+
+              {messages.length > 0 && (
+                <div className="pt-6">
+                  <p className="mb-3 text-xs uppercase tracking-[0.2em] text-ink-faint">
+                    Recent messages
+                  </p>
+                  <div className="space-y-3">
+                    {messages.slice(0, 4).map((item) => (
+                      <div key={item.id} className="rounded-xl border border-line bg-black/15 p-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <p className="text-sm font-medium text-ink">{item.name}</p>
+                          <span className="text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+                            {new Date(item.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-xs text-accent-soft">{item.subject}</p>
+                        <p className="mt-2 text-sm leading-relaxed text-ink-dim">{item.message}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </form>
           )}
         </Reveal>
