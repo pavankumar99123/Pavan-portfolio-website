@@ -8,5 +8,6 @@ export const profile = {
   github: "https://github.com/pavankumar99123",
   githubUsername: "pavankumar99123",
   linkedin: "https://www.linkedin.com/in/pavankumar-bathula/",
-  resumePath: "/resume/Pavan-Kumar-Bathula-Resume.pdf",
+  profileImage: `${import.meta.env.BASE_URL}portrait.jpg`,
+  resumePath: `${import.meta.env.BASE_URL}resume/Pavan-Kumar-Bathula-Resume.pdf`,
 };
